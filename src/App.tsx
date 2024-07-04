@@ -146,14 +146,6 @@ const App: React.FC = () => {
           <div className="md:col-span-2">
             <h2 className="text-2xl font-semibold mb-4">Shift Timetable</h2>
             <ShiftTimetable timetable={timetable} daysOfWeek={daysOfWeek} />
-            <div className="flex justify-center mt-8">
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded shadow"
-              >
-                Assign Shifts
-              </button>
-            </div>
           </div>
         </div>
       )}
