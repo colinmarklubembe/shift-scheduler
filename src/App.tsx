@@ -1,12 +1,10 @@
-// src/App.tsx
 import React, { useState } from "react";
 import TeamMembers from "./components/TeamMembers";
 import ShiftTimetable from "./components/ShiftTimetable";
-import AssignShiftsButton from "./components/AssignShiftsButton";
 import Modal from "./components/Modal";
 
 const App: React.FC = () => {
-  const teamMembers = ["Member1", "Member2", "Member3", "Member4", "Member5"];
+  const [teamMembers, setTeamMembers] = useState<string[]>([]);
   const daysOfWeek = [
     "Monday",
     "Tuesday",
@@ -28,6 +26,15 @@ const App: React.FC = () => {
         ? prev.filter((m) => m !== member)
         : [...prev, member]
     );
+  };
+
+  const addMember = (member: string) => {
+    setTeamMembers((prevMembers) => [...prevMembers, member]);
+  };
+
+  const removeMember = (member: string) => {
+    setTeamMembers((prevMembers) => prevMembers.filter((m) => m !== member));
+    setSelectedMembers((prev) => prev.filter((m) => m !== member));
   };
 
   const assignShifts = () => {
@@ -84,6 +91,7 @@ const App: React.FC = () => {
             members={teamMembers}
             selectedMembers={selectedMembers}
             toggleMember={toggleMember}
+            addMember={addMember}
           />
         </div>
         <div className="md:col-span-2">
