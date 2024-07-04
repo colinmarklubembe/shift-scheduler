@@ -5,6 +5,7 @@ interface TeamMembersProps {
   selectedMembers: string[];
   toggleMember: (member: string) => void;
   addMember: (member: string) => void;
+  removeMember: (member: string) => void;
 }
 
 const TeamMembers: React.FC<TeamMembersProps> = ({
@@ -12,6 +13,7 @@ const TeamMembers: React.FC<TeamMembersProps> = ({
   selectedMembers,
   toggleMember,
   addMember,
+  removeMember,
 }) => {
   const [newMember, setNewMember] = useState("");
 
@@ -45,7 +47,7 @@ const TeamMembers: React.FC<TeamMembersProps> = ({
       {members.map((member) => (
         <div
           key={member}
-          className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4"
+          className="bg-white rounded-lg shadow-md p-4 flex items-center justify-between"
         >
           <label className="flex items-center space-x-2">
             <input
@@ -56,6 +58,12 @@ const TeamMembers: React.FC<TeamMembersProps> = ({
             />
             <span className="text-lg">{member}</span>
           </label>
+          <button
+            onClick={() => removeMember(member)} // This line triggers removal
+            className="text-red-500 hover:text-red-700 focus:outline-none"
+          >
+            Remove
+          </button>
         </div>
       ))}
     </div>
