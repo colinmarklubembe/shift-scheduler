@@ -3,17 +3,17 @@
   "name": "Create React App Sample",
   "icons": [
     {
-      "src": "calener-days-regular.svg",
+      "src": "https://icons8.com/icon/Zws3DgVpMS6e/globe",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "calener-days-regular.svg",
+      "src": "https://icons8.com/icon/Zws3DgVpMS6e/globe",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "calener-days-regular.svg",
+      "src": "https://icons8.com/icon/Zws3DgVpMS6e/globe",
       "type": "image/png",
       "sizes": "512x512"
     }
