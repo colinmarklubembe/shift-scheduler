@@ -25,7 +25,7 @@ const TeamMembers: React.FC<TeamMembersProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <div className="space-y-4">
       {/* Input field to add new member */}
       <div className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4">
         <input
@@ -33,11 +33,11 @@ const TeamMembers: React.FC<TeamMembersProps> = ({
           value={newMember}
           onChange={(e) => setNewMember(e.target.value)}
           placeholder="Enter new member"
-          className="form-input h-10 px-4 w-full border rounded-lg focus:outline-none focus:border-blue-500"
+          className="form-input h-10 px-4 w-full border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
         />
         <button
           onClick={handleAddMember}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
         >
           Add
         </button>
@@ -54,12 +54,12 @@ const TeamMembers: React.FC<TeamMembersProps> = ({
               type="checkbox"
               checked={selectedMembers.includes(member)}
               onChange={() => toggleMember(member)}
-              className="form-checkbox h-5 w-5 text-blue-600"
+              className="form-checkbox h-5 w-5 text-indigo-600"
             />
-            <span className="text-lg">{member}</span>
+            <span className="text-lg text-gray-700">{member}</span>
           </label>
           <button
-            onClick={() => removeMember(member)} // This line triggers removal
+            onClick={() => removeMember(member)}
             className="text-red-500 hover:text-red-700 focus:outline-none"
           >
             Remove
