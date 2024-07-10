@@ -5,13 +5,13 @@ import Modal from "./components/Modal";
 
 const App: React.FC = () => {
   const daysOfWeek = [
-    "Sunday",
     "Monday",
     "Tuesday",
     "Wednesday",
     "Thursday",
     "Friday",
     "Saturday",
+    "Sunday",
   ];
   const [teamMembers, setTeamMembers] = useState<string[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
@@ -52,13 +52,23 @@ const App: React.FC = () => {
     setTimetable(newTimetable);
     localStorage.setItem(
       "teamMembers",
-      JSON.stringify([...teamMembers.filter((m) => m !== member)])
+      JSON.stringify(teamMembers.filter((m) => m !== member))
     );
   };
 
   const assignShifts = () => {
-    if (selectedMembers.length < 5) {
-      alert("You need at least 5 members to assign shifts.");
+    const requiredShifts: any = {
+      Monday: { day: 3, night: 2 },
+      Tuesday: { day: 3, night: 2 },
+      Wednesday: { day: 3, night: 2 },
+      Thursday: { day: 3, night: 2 },
+      Friday: { day: 3, night: 2 },
+      Saturday: { day: 1, night: 1 },
+      Sunday: { day: 1, night: 1 },
+    };
+
+    if (selectedMembers.length < 7) {
+      alert("You need at least 7 members to assign shifts.");
       setIsModalOpen(false);
       return;
     }
@@ -69,92 +79,66 @@ const App: React.FC = () => {
     const shiftsCount: Record<string, number> = {};
     selectedMembers.forEach((member) => {
       shiftsCount[member] = 0;
+      newTimetable[member] = [];
     });
 
-    // Generate shifts for each day of the week
-    const daysOfWeek = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday",
-    ];
+    // Helper function to shuffle an array
+    const shuffleArray = <T,>(array: T[]): T[] => {
+      const shuffled = array.slice();
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    };
 
+    // Assign shifts for each day
     daysOfWeek.forEach((day) => {
-      const dayShifts = assignShiftsForDay(selectedMembers, shiftsCount);
-      dayShifts.forEach(([member, shift]) => {
-        if (!newTimetable[member]) {
-          newTimetable[member] = [];
+      const dayMembers = shuffleArray([...selectedMembers]);
+
+      let dayShiftCount = 0;
+      let nightShiftCount = 0;
+
+      for (let i = 0; i < dayMembers.length; i++) {
+        const member = dayMembers[i];
+        if (shiftsCount[member] < 5) {
+          if (dayShiftCount < requiredShifts[day].day) {
+            newTimetable[member].push(`Day`);
+            shiftsCount[member]++;
+            dayShiftCount++;
+          } else if (nightShiftCount < requiredShifts[day].night) {
+            newTimetable[member].push(`Night`);
+            shiftsCount[member]++;
+            nightShiftCount++;
+          } else {
+            newTimetable[member].push(`Off`);
+          }
+        } else {
+          newTimetable[member].push(`Off`);
         }
-        newTimetable[member].push(shift);
-      });
+      }
     });
 
-    // Ensure two days off for each member
+    // Ensure each member has exactly two off days
     Object.keys(newTimetable).forEach((member) => {
-      ensureTwoOffDays(newTimetable[member]);
+      let offDaysCount = newTimetable[member].filter((shift) =>
+        shift.endsWith("Off")
+      ).length;
+      while (offDaysCount < 2) {
+        const randomDay = Math.floor(Math.random() * daysOfWeek.length);
+        const shift = newTimetable[member][randomDay];
+        if (!shift.endsWith("Off")) {
+          newTimetable[member][randomDay] = shift.replace(
+            / (Day|Night)$/,
+            " Off"
+          );
+          offDaysCount++;
+        }
+      }
     });
 
     setTimetable(newTimetable);
     setIsModalOpen(false);
-  };
-
-  const assignShiftsForDay = (
-    members: string[],
-    shiftsCount: Record<string, number>
-  ): [string, string][] => {
-    const shuffledMembers = shuffleArray([...members]);
-    const dayShifts: [string, string][] = [];
-
-    let dayShiftCount = 0;
-    let nightShiftCount = 0;
-
-    for (let i = 0; i < shuffledMembers.length; i++) {
-      const member = shuffledMembers[i];
-      if (dayShiftCount < 3) {
-        dayShifts.push([member, "Day"]);
-        dayShiftCount++;
-        shiftsCount[member]++;
-      } else if (nightShiftCount < 2) {
-        dayShifts.push([member, "Night"]);
-        nightShiftCount++;
-        shiftsCount[member]++;
-      } else {
-        break;
-      }
-    }
-
-    return dayShifts;
-  };
-
-  const ensureTwoOffDays = (shifts: string[]) => {
-    let offDaysCount = shifts.filter((shift) => shift === "Off").length;
-    while (offDaysCount < 2) {
-      const randomIndex = Math.floor(Math.random() * shifts.length);
-      if (shifts[randomIndex] !== "Off") {
-        shifts[randomIndex] = "Off";
-        offDaysCount++;
-      }
-    }
-
-    while (offDaysCount > 2) {
-      const randomIndex = Math.floor(Math.random() * shifts.length);
-      if (shifts[randomIndex] === "Off") {
-        shifts[randomIndex] = "Day"; // Assign a "Day" shift to balance
-        offDaysCount--;
-      }
-    }
-  };
-
-  const shuffleArray = <T,>(array: T[]): T[] => {
-    const shuffled = array.slice();
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
   };
 
   return (
